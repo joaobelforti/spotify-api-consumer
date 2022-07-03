@@ -12,24 +12,24 @@ import (
 )
 
 type MusicFeatures struct {
+	Acousticness     float64 `json:"acousticness"`
+	AnalysisURL      string  `json:"analysis_url"`
 	Danceability     float64 `json:"danceability"`
+	DurationMs       int     `json:"duration_ms"`
 	Energy           float64 `json:"energy"`
+	ID               string  `json:"id"`
+	Instrumentalness float64 `json:"instrumentalness"`
 	Key              int     `json:"key"`
+	Liveness         float64 `json:"liveness"`
 	Loudness         float64 `json:"loudness"`
 	Mode             int     `json:"mode"`
 	Speechiness      float64 `json:"speechiness"`
-	Acousticness     float64 `json:"acousticness"`
-	Instrumentalness int     `json:"instrumentalness"`
-	Liveness         float64 `json:"liveness"`
-	Valence          float64 `json:"valence"`
 	Tempo            float64 `json:"tempo"`
-	Type             string  `json:"type"`
-	ID               string  `json:"id"`
-	URI              string  `json:"uri"`
-	TrackHref        string  `json:"track_href"`
-	AnalysisURL      string  `json:"analysis_url"`
-	DurationMs       int     `json:"duration_ms"`
 	TimeSignature    int     `json:"time_signature"`
+	TrackHref        string  `json:"track_href"`
+	Type             string  `json:"type"`
+	URI              string  `json:"uri"`
+	Valence          float64 `json:"valence"`
 }
 
 func main() {
@@ -52,7 +52,7 @@ func main() {
 		data := MusicFeatures{}
 		json.Unmarshal([]byte(resp), &data)
 		fmt.Println(data.Danceability)
-		csvLine:=fmt.Sprintf("%f", data.Danceability)+","+fmt.Sprintf("%f",data.Energy)+","+strconv.Itoa(data.Key)+","+fmt.Sprintf("%f",data.Loudness)+","+strconv.Itoa(data.Mode)+","+fmt.Sprintf("%f",data.Speechiness)+","+fmt.Sprintf("%f",data.Acousticness)+","+strconv.Itoa(data.Instrumentalness)+","+fmt.Sprintf("%f",data.Liveness)+","+fmt.Sprintf("%f",data.Valence)+","+fmt.Sprintf("%f",data.Tempo)+","+fmt.Sprintf("%f",data.Tempo)+","+string(data.Type)+","+string(data.ID)+","+string(data.URI)+","+string(data.TrackHref)+","+string(data.AnalysisURL)+","+strconv.Itoa(data.DurationMs)+","+strconv.Itoa(data.TimeSignature)+"\n"
+		csvLine:=fmt.Sprintf("%f", data.Danceability)+","+fmt.Sprintf("%f",data.Energy)+","+strconv.Itoa(data.Key)+","+fmt.Sprintf("%f",data.Loudness)+","+strconv.Itoa(data.Mode)+","+fmt.Sprintf("%f",data.Speechiness)+","+fmt.Sprintf("%f",data.Acousticness)+","+fmt.Sprintf("%f",data.Instrumentalness)+","+fmt.Sprintf("%f",data.Liveness)+","+fmt.Sprintf("%f",data.Valence)+","+fmt.Sprintf("%f",data.Tempo)+","+fmt.Sprintf("%f",data.Tempo)+","+string(data.Type)+","+string(data.ID)+","+string(data.URI)+","+string(data.TrackHref)+","+string(data.AnalysisURL)+","+strconv.Itoa(data.DurationMs)+","+strconv.Itoa(data.TimeSignature)+"\n"
 		_, err := f.Write([]byte(csvLine))
 		if err != nil {
 			log.Fatal(err)
@@ -61,7 +61,7 @@ func main() {
 }
 
 func getBearer() string {
-	return "BQC7JN7G2ps6X7lsI_wLE92IiJetpPtE9GsWhl9xQ0v5H7fOBqrwa8Ecs5HVVbTGCCshNUSTbqHImCmyVkHYv1jUd28rTuCzknXg-RiAV8UnJ7akK5JumyLsX0SWIegKyI3HcZNpK2j12r_JX0XY3MH2hC7gFJDk8htcchpO-KwuL4GFPsnksg4QllEd_o1DgoFRg-dZqUBHcuggcX8firBpz2k4vebp"
+	return "BQA4mY1ejtjhc4uqKKpo5_TbyDqZ_YXlsIrjmM7jQe4uqcfrefQvYdNgVUgLksQX6HsvGfx24Qyy16sgiiO6CjaMowmkEc_znMEne0IaltrOkLXWHJBfMHNYaH97KwXb6iB0WU9t6AxQtTTEGdAX0mJ0PruJM82WnrsgoUDOFCoP4TXBGMghjXHxDgeNVWejo7BeM7-W-wVzPiovt8GqbnSZmyaccYJI"
 }
 
 func makeRequest(musicId string) string{
