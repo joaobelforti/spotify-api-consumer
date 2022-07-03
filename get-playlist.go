@@ -24,28 +24,31 @@ type Total struct {
 }
 
 func main() {
+	playlists:=[]string{"37i9dQZF1DWUIDYTCle9M9","37i9dQZF1DWWQRwui0ExPn","37i9dQZF1DX6e81LupkkgG","7y6tlnIjgyIQPjmYhauphK"}
 	f, err := os.Create("musics.txt")
 	if err != nil {
 		log.Fatal(err)
 	}
-	total:=getTotal()/100
-	total=total+1
-	for i := 0; i < total; i++ {
-		resp:=makeRequest(i*100)
-		arrayTracks:=processResponse(resp)
-		for x := 0; x < len(arrayTracks); x++ {
-			data := TrackId{}
-			json.Unmarshal([]byte(arrayTracks[x]), &data)
-			if data.Track.ID != "" {
-				_, err := f.Write([]byte(data.Track.ID+"\n"))
-				if err != nil {
-					log.Fatal(err)
+	for m := 0; m < len(playlists); m++ {
+		total:=getTotal(playlists[m])/100
+		total=total+1
+		for i := 0; i < total; i++ {
+				resp:=makeRequest(i*100,playlists[m])
+				arrayTracks:=processResponse(resp)
+				for x := 0; x < len(arrayTracks); x++ {
+					data := TrackId{}
+					json.Unmarshal([]byte(arrayTracks[x]), &data)
+					if data.Track.ID != "" {
+						_, err := f.Write([]byte(data.Track.ID+"\n"))
+						if err != nil {
+							log.Fatal(err)
+						}
+					}
+					
 				}
+				time.Sleep(1 * time.Second)
 			}
-			
 		}
-		time.Sleep(1 * time.Second)
-	}
 	fmt.Println("MUSICS IDS DONE.")
 }
 
@@ -57,12 +60,12 @@ func processResponse(resp  string) []string{
 	return arrayTracks
 }
 func getBearer() string {
-	return "BQDA6BQJ4WGwVNloL6RuR_CR6w4tFW-D-7DE33uo7GED_eKxIvjev7YPhTI735PYckIMkNBjQLjpwJ3pUZJwlj0Kv5WnsqERzmHDJD9NP5l0RfL4DoyOQh57QVwE9ZowhQPpR_Hq07wcOZU1WZ77t-X2ZVVnhOX8iqwIjOQVad6nYzts76j7Md45zAQJ7e9cc7EbZsqls8h5YaIPDoths6SIzN3rDjhH"
+	return "BQBPP-upCwuNxHee5Pg3eCa3O5rEPL-oxk-qr6-fGZE2PK3-r_b4UYOCA_IkY-gYMw73OzwqGsUhM7TCbs7yBDhUa5clXddlF6U_ZLE-zDAVkXfA2YGDtMLz5eJ5qTWoRMKucqN2au4kufGKX5m7bagZEbIVSz9sXIICFlHwzUZOOuGmMWeV0U_0rFXEO4tRMBM73VaBdDJfh2J01OuPrEeyziOR-Hpz"
 }
 //https://open.spotify.com/playlist/7y6tlnIjgyIQPjmYhauphK?si=573ea74fbe2d40af
-func makeRequest(offset int) string{
+func makeRequest(offset int, playlistId string) string{
 	var bearer = "Bearer "+getBearer()
-	req, err := http.NewRequest("GET", "https://api.spotify.com/v1/playlists/37i9dQZF1DWWQRwui0ExPn/tracks", nil)
+	req, err := http.NewRequest("GET", "https://api.spotify.com/v1/playlists/"+playlistId+"/tracks", nil)
 	q := req.URL.Query()
     q.Add("offset", strconv.Itoa(offset))
 	q.Add("fields","items(track(id))")
@@ -87,9 +90,9 @@ func makeRequest(offset int) string{
 	return strJson
 }
 
-func getTotal() int {
+func getTotal(playlistId  string) int {
 	var bearer = "Bearer "+getBearer()
-	req, err := http.NewRequest("GET", "https://api.spotify.com/v1/playlists/37i9dQZF1DWWQRwui0ExPn/tracks", nil)
+	req, err := http.NewRequest("GET", "https://api.spotify.com/v1/playlists/"+playlistId+"/tracks", nil)
 	q := req.URL.Query()
 	q.Add("fields","total")
 	req.Header.Add("Authorization", bearer)

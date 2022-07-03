@@ -80,7 +80,7 @@ func writeCsv(f_write_csv *os.File) {
 }
 
 func getBearer() string {
-	return "BQCKSpsq9aEngw3Okv4Ih_uqvWEc5EF5d-qp1ZzdAxIKLmgKUMXMuUbQPkXh0x0gU5rPz3oZZtH2CWD_yRAtIvKbHEdz7EHB9ju_qQTWUIwjqhPb2SE2JM7x1Xc8hnFQWQkwGKqDmt1kaEO5-iKwkXXHsy2WQhEOp4aaaRGuhR2aV8C-JlhLZ15l5MdDlNXryuQSOUXJmi1VG2RHCIFy7lDp4c1TjV-g"
+	return "BQADSk-hiVQ6vqDFMEeabCji-rQdb85GzpwIhApdFDMSX0i882_9A2PP--cvSoeRLmfWe9WUikXJQqPllzf2NQ8oSB9cICUQVVe_vg8RPtxPIplMddEKl8VMbtbxQ9R0zDW8rvoesrsRJ05fkvcz6ryJaIFaKrQaQRp6Nn3dwqm2Hdafq9GTcSuB4p_Z6NTyVFvW9uEhdkHaSJYF-Cooh8mtj7EN_w8u"
 }
 
 func makeRequest(musicId string) string{
