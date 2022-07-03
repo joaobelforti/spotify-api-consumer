@@ -71,7 +71,7 @@ func writeCsv(f_write_csv *os.File) {
 	for i := 0; i < len(jsonArray); i++ {
 		data := MusicFeatures{}
 		json.Unmarshal([]byte(jsonArray[i]), &data)
-		csvLine:=fmt.Sprintf("%f", data.Danceability)+","+fmt.Sprintf("%f",data.Energy)+","+strconv.Itoa(data.Key)+","+fmt.Sprintf("%f",data.Loudness)+","+strconv.Itoa(data.Mode)+","+fmt.Sprintf("%f",data.Speechiness)+","+fmt.Sprintf("%f",data.Acousticness)+","+strconv.Itoa(data.Instrumentalness)+","+fmt.Sprintf("%f",data.Liveness)+","+fmt.Sprintf("%f",data.Valence)+","+fmt.Sprintf("%f",data.Tempo)+","+fmt.Sprintf("%f",data.Tempo)+","+string(data.Type)+","+string(data.ID)+","+string(data.URI)+","+string(data.TrackHref)+","+string(data.AnalysisURL)+","+strconv.Itoa(data.DurationMs)+","+strconv.Itoa(data.TimeSignature)+"\n"
+		csvLine:=fmt.Sprintf("%f", data.Danceability)+","+fmt.Sprintf("%f",data.Energy)+","+strconv.Itoa(data.Key)+","+fmt.Sprintf("%f",data.Loudness)+","+strconv.Itoa(data.Mode)+","+fmt.Sprintf("%f",data.Speechiness)+","+fmt.Sprintf("%f",data.Acousticness)+","+strconv.Itoa(data.Instrumentalness)+","+fmt.Sprintf("%f",data.Liveness)+","+fmt.Sprintf("%f",data.Valence)+","+fmt.Sprintf("%f",data.Tempo)+","+string(data.Type)+","+string(data.ID)+","+string(data.URI)+","+string(data.TrackHref)+","+string(data.AnalysisURL)+","+strconv.Itoa(data.DurationMs)+","+strconv.Itoa(data.TimeSignature)+"\n"
 		_, err := f_write_csv.Write([]byte(csvLine))
 		if err != nil {
 			log.Fatal(err)
@@ -80,7 +80,7 @@ func writeCsv(f_write_csv *os.File) {
 }
 
 func getBearer() string {
-	return "BQADSk-hiVQ6vqDFMEeabCji-rQdb85GzpwIhApdFDMSX0i882_9A2PP--cvSoeRLmfWe9WUikXJQqPllzf2NQ8oSB9cICUQVVe_vg8RPtxPIplMddEKl8VMbtbxQ9R0zDW8rvoesrsRJ05fkvcz6ryJaIFaKrQaQRp6Nn3dwqm2Hdafq9GTcSuB4p_Z6NTyVFvW9uEhdkHaSJYF-Cooh8mtj7EN_w8u"
+	return "BQAgpubs3sEHjRRFqPTXZ7upHvwqXMZXWkWoI8Jpj6O1MqSFmWeq4SB-1BIBiH66y1BYnxfV2SmyuExUPjSgvUniGJJHa_BSi5d3dklueucEeCLowQ19AOvoieltbTntpg1ErYKTVH0i0J69oW8V-qQMy1hpC1nTKSjSLl3_lRg1mzh9M5miosuszHJLZUj-aRHT0O94x8Put30-BVAfIZX1YT9gveU9"
 }
 
 func makeRequest(musicId string) string{
