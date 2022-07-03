@@ -8,6 +8,7 @@ import (
    "strings"
    "encoding/json"
    "strconv"
+   "time"
    "os"
 )
 
@@ -38,7 +39,6 @@ func main() {
 	f_write_csv.Write([]byte("danceability,energy,key,loudness,mode,speechiness,acousticness,instrumentalness,liveness,valence,tempo,type,id,uri,track_href,analysis_url,duration_ms,time_signature\n"))
     arrayIds:=strings.Split(string(musicsIds),"\n")
 	strIds:=""
-	fmt.Println(len(arrayIds))
 	for i := 0; i < len(arrayIds)+1; i++ {
 		if (i%100 == 0 || i==len(arrayIds)-1) && i !=0 {
 			f1, _ := os.Create("tmp.txt")
@@ -46,14 +46,14 @@ func main() {
 			f1.Write([]byte(resp))
 			writeCsv(f_write_csv)
 			if (i==len(arrayIds)-1){
-				fmt.Println(i)
 				break;
 			}
 			strIds=""
+			time.Sleep(1 * time.Second)
 		}
-		
 		strIds=arrayIds[i]+","+strIds
 	}
+	fmt.Println("CSV DONE.")
 }
 
 func processResponse(audio_features_read string) []string{
@@ -80,7 +80,7 @@ func writeCsv(f_write_csv *os.File) {
 }
 
 func getBearer() string {
-	return "BQA8unC3sBo4LG6JG4MJd10wcWrPtbe5xK1nGhzfutJj13MWPn39tZBCkAm-StL0-8BM1m2r3JvzjEOk68OeHgh6rqTpiztGF1WeiYqq64MelWOkOm_jG9l1jIdFMosevkR0A9_6PtJOFrJ4pEjQpAHyfzllxYgSg1uvkxMeCCnHYuHxNYtWgRscZzEK1DscRkEXseUT1OJt9GVm7N_s_Ei0L7zVhhN2"
+	return "BQCKSpsq9aEngw3Okv4Ih_uqvWEc5EF5d-qp1ZzdAxIKLmgKUMXMuUbQPkXh0x0gU5rPz3oZZtH2CWD_yRAtIvKbHEdz7EHB9ju_qQTWUIwjqhPb2SE2JM7x1Xc8hnFQWQkwGKqDmt1kaEO5-iKwkXXHsy2WQhEOp4aaaRGuhR2aV8C-JlhLZ15l5MdDlNXryuQSOUXJmi1VG2RHCIFy7lDp4c1TjV-g"
 }
 
 func makeRequest(musicId string) string{

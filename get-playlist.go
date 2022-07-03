@@ -9,6 +9,7 @@ import (
    "encoding/json"
    "regexp"
    "os"
+   "fmt"
    "time"
 )
 
@@ -45,6 +46,7 @@ func main() {
 		}
 		time.Sleep(1 * time.Second)
 	}
+	fmt.Println("MUSICS IDS DONE.")
 }
 
 func processResponse(resp  string) []string{
@@ -55,7 +57,7 @@ func processResponse(resp  string) []string{
 	return arrayTracks
 }
 func getBearer() string {
-	return "BQC1bC7IpGftE2nwLmGMVIpdfTcZjPm_-MseINMYQHfP5RY9eypbtiCIJe53jJd_M6AX3GdJHQv9S8uGPoZCXlL3yesv-F7JijNsR2HqIE9CDZH79uhnLYfBFBJljsrYSvk-3EHzmXE7s8uB5LJWizHGBLcBtJ0coJiHSsS9SEU6FugLgpK4KqV73q1mXE0Xk7QGrf2MMCBAeVhRiHM293k4TChLpVWw"
+	return "BQDA6BQJ4WGwVNloL6RuR_CR6w4tFW-D-7DE33uo7GED_eKxIvjev7YPhTI735PYckIMkNBjQLjpwJ3pUZJwlj0Kv5WnsqERzmHDJD9NP5l0RfL4DoyOQh57QVwE9ZowhQPpR_Hq07wcOZU1WZ77t-X2ZVVnhOX8iqwIjOQVad6nYzts76j7Md45zAQJ7e9cc7EbZsqls8h5YaIPDoths6SIzN3rDjhH"
 }
 //https://open.spotify.com/playlist/7y6tlnIjgyIQPjmYhauphK?si=573ea74fbe2d40af
 func makeRequest(offset int) string{
