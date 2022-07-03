@@ -56,7 +56,7 @@ func main() {
 	}
 }
 
-func processJson(audio_features_read string) []string{
+func processResponse(audio_features_read string) []string{
 	audio_features_array_aux1 := strings.Split(audio_features_read,"[")
 	audio_features_array_aux2 := strings.Split(audio_features_array_aux1[1],"]")
 	res1 := strings.ReplaceAll(audio_features_array_aux2[0], "},{", "} , {")
@@ -66,7 +66,7 @@ func processJson(audio_features_read string) []string{
 
 func writeCsv(f_write_csv *os.File) {
 	audio_features_read, _ := ioutil.ReadFile("tmp.txt")
-	jsonArray := processJson(string(audio_features_read))
+	jsonArray := processResponse(string(audio_features_read))
 	
 	for i := 0; i < len(jsonArray); i++ {
 		data := MusicFeatures{}
@@ -80,7 +80,7 @@ func writeCsv(f_write_csv *os.File) {
 }
 
 func getBearer() string {
-	return "BQAG2AhDMD8-6n1VwFYU5Nwr-AUlNhumTDgf7x9msVq4YxTwRGX-cV6g25I8BdjJNW1viNPv7-Ecmkl4g_mYWifjrXS7mxI1J4XLyhaldW4Qq-GqCgWo1YuJBlo411HXrtEOIWKkILOD89PTJlo3IU5oIUHaKhX9A2y8lQw1CbQZR6aqx6GaEypSz9z4Tyc37s4bm467cq6w9pg96lypf1Cb08Gas2Qx"
+	return "BQA8unC3sBo4LG6JG4MJd10wcWrPtbe5xK1nGhzfutJj13MWPn39tZBCkAm-StL0-8BM1m2r3JvzjEOk68OeHgh6rqTpiztGF1WeiYqq64MelWOkOm_jG9l1jIdFMosevkR0A9_6PtJOFrJ4pEjQpAHyfzllxYgSg1uvkxMeCCnHYuHxNYtWgRscZzEK1DscRkEXseUT1OJt9GVm7N_s_Ei0L7zVhhN2"
 }
 
 func makeRequest(musicId string) string{

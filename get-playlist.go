@@ -31,10 +31,7 @@ func main() {
 	total=total+1
 	for i := 0; i < total; i++ {
 		resp:=makeRequest(i*100)
-		arrayTracks:=strings.Split(resp,"[")
-		remove := regexp.MustCompile(`]`)
-		arrayIds:=remove.Split(arrayTracks[1],-1)
-		arrayTracks=strings.Split(arrayIds[0],",")
+		arrayTracks:=processResponse(resp)
 		for x := 0; x < len(arrayTracks); x++ {
 			data := TrackId{}
 			json.Unmarshal([]byte(arrayTracks[x]), &data)
@@ -50,8 +47,15 @@ func main() {
 	}
 }
 
+func processResponse(resp  string) []string{
+	arrayTracks:=strings.Split(resp,"[")
+	remove := regexp.MustCompile(`]`)
+	arrayIds:=remove.Split(arrayTracks[1],-1)
+	arrayTracks=strings.Split(arrayIds[0],",")
+	return arrayTracks
+}
 func getBearer() string {
-	return "BQC7JN7G2ps6X7lsI_wLE92IiJetpPtE9GsWhl9xQ0v5H7fOBqrwa8Ecs5HVVbTGCCshNUSTbqHImCmyVkHYv1jUd28rTuCzknXg-RiAV8UnJ7akK5JumyLsX0SWIegKyI3HcZNpK2j12r_JX0XY3MH2hC7gFJDk8htcchpO-KwuL4GFPsnksg4QllEd_o1DgoFRg-dZqUBHcuggcX8firBpz2k4vebp"
+	return "BQC1bC7IpGftE2nwLmGMVIpdfTcZjPm_-MseINMYQHfP5RY9eypbtiCIJe53jJd_M6AX3GdJHQv9S8uGPoZCXlL3yesv-F7JijNsR2HqIE9CDZH79uhnLYfBFBJljsrYSvk-3EHzmXE7s8uB5LJWizHGBLcBtJ0coJiHSsS9SEU6FugLgpK4KqV73q1mXE0Xk7QGrf2MMCBAeVhRiHM293k4TChLpVWw"
 }
 //https://open.spotify.com/playlist/7y6tlnIjgyIQPjmYhauphK?si=573ea74fbe2d40af
 func makeRequest(offset int) string{
