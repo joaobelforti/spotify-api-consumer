@@ -28,15 +28,15 @@ type BearerToken struct {
 }
 
 func main() {
-	playlists:=[]string{"37i9dQZF1DWUIDYTCle9M9","37i9dQZF1DWWQRwui0ExPn","37i9dQZF1DX6e81LupkkgG","7y6tlnIjgyIQPjmYhauphK"}
-	f, err := os.Create("src/musics.txt")
+	playlists:=getPlaylists()
+	f, err := os.Create("src/musics-ids.txt")
 
 	if err != nil {
 		log.Fatal(err)
 	}
 
 	for m := 0; m < len(playlists); m++ {
-		total:=getTotalMusics(playlists[m])/100
+		total:=getTotalMusicsPlaylist(playlists[m])/100
 		total=total+1
 
 		for i := 0; i < total; i++ {
@@ -60,6 +60,7 @@ func main() {
 		}
 	fmt.Println("MUSICS IDS DONE.")
 }
+
 
 func processResponse(resp  string) []string{
 	arrayTracks:=strings.Split(resp,"[")
@@ -106,7 +107,20 @@ func makeRequest(offset int, playlistId string) string{
 	return strJson
 }
 
-func getTotalMusics(playlistId  string) int {
+func getPlaylists() []string{
+	musicsIds, _ := ioutil.ReadFile("playlists.txt")
+	arrayMusicsIds := strings.Split(string(musicsIds),"\n")
+	arraysPlaylists := []string{}
+	for i := 0; i < len(arrayMusicsIds); i++ {
+		reg := regexp.MustCompile(`https://open.spotify.com/playlist/`)
+		textAux1 := reg.Split(arrayMusicsIds[i],-1)
+		textAux2 := strings.Split(textAux1[1],"?")
+		arraysPlaylists = append(arraysPlaylists, textAux2[0])
+	}
+	return arraysPlaylists
+}
+
+func getTotalMusicsPlaylist(playlistId  string) int {
 	var bearer = "Bearer "+getBearerToken()
 
 	req, err := http.NewRequest("GET", "https://api.spotify.com/v1/playlists/"+playlistId+"/tracks", nil)

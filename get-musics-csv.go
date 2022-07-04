@@ -38,9 +38,9 @@ type BearerToken struct {
 }
 
 func main() {
-	getBearer()
+	getBearerToken()
 	f_write_csv, _ := os.Create("src/musics-csv.csv")
-	musicsIds, _ := ioutil.ReadFile("src/musics.txt")
+	musicsIds, _ := ioutil.ReadFile("src/musics-ids.txt")
 	f_write_csv.Write([]byte("danceability,energy,key,loudness,mode,speechiness,acousticness,instrumentalness,liveness,valence,tempo,type,id,uri,track_href,analysis_url,duration_ms,time_signature\n"))
     arrayIds:=strings.Split(string(musicsIds),"\n")
 	strIds:=""
@@ -84,7 +84,7 @@ func writeCsv(f_write_csv *os.File) {
 	}
 }
 
-func getBearer() string {
+func getBearerToken() string {
 	url:="http://localhost:8080/token"
 	resp, err := http.Get(url)
 	if err != nil {
@@ -97,7 +97,7 @@ func getBearer() string {
 }
 
 func makeRequest(musicId string) string{
-	var bearer = "Bearer "+getBearer()
+	var bearer = "Bearer "+getBearerToken()
 	url:="https://api.spotify.com/v1/audio-features"
 	req, err := http.NewRequest("GET", url, nil)
 
