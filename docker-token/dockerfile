@@ -1,0 +1,10 @@
+FROM node:16.15-alpine3.14
+RUN mkdir /app
+WORKDIR /app
+COPY . .
+RUN npm install request
+RUN npm install axios
+RUN npm install dotenv
+RUN npm install express
+CMD [ "node", "get-token.js"]
+EXPOSE 3000

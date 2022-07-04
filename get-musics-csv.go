@@ -33,15 +33,20 @@ type MusicFeatures struct {
 	TimeSignature    int     `json:"time_signature"`
 }
 
+type BearerToken struct {
+	Token string `json:"token"`
+}
+
 func main() {
-	f_write_csv, _ := os.Create("musics-csv.csv")
-	musicsIds, _ := ioutil.ReadFile("musics.txt")
+	getBearer()
+	f_write_csv, _ := os.Create("src/musics-csv.csv")
+	musicsIds, _ := ioutil.ReadFile("src/musics.txt")
 	f_write_csv.Write([]byte("danceability,energy,key,loudness,mode,speechiness,acousticness,instrumentalness,liveness,valence,tempo,type,id,uri,track_href,analysis_url,duration_ms,time_signature\n"))
     arrayIds:=strings.Split(string(musicsIds),"\n")
 	strIds:=""
 	for i := 0; i < len(arrayIds)+1; i++ {
 		if (i%100 == 0 || i==len(arrayIds)-1) && i !=0 {
-			f1, _ := os.Create("tmp.txt")
+			f1, _ := os.Create("src/tmp.txt")
 			resp:=makeRequest(strIds)
 			f1.Write([]byte(resp))
 			writeCsv(f_write_csv)
@@ -65,7 +70,7 @@ func processResponse(audio_features_read string) []string{
 }
 
 func writeCsv(f_write_csv *os.File) {
-	audio_features_read, _ := ioutil.ReadFile("tmp.txt")
+	audio_features_read, _ := ioutil.ReadFile("src/tmp.txt")
 	jsonArray := processResponse(string(audio_features_read))
 	
 	for i := 0; i < len(jsonArray); i++ {
@@ -80,19 +85,28 @@ func writeCsv(f_write_csv *os.File) {
 }
 
 func getBearer() string {
-	return "BQAgpubs3sEHjRRFqPTXZ7upHvwqXMZXWkWoI8Jpj6O1MqSFmWeq4SB-1BIBiH66y1BYnxfV2SmyuExUPjSgvUniGJJHa_BSi5d3dklueucEeCLowQ19AOvoieltbTntpg1ErYKTVH0i0J69oW8V-qQMy1hpC1nTKSjSLl3_lRg1mzh9M5miosuszHJLZUj-aRHT0O94x8Put30-BVAfIZX1YT9gveU9"
+	url:="http://localhost:8080/token"
+	resp, err := http.Get(url)
+	if err != nil {
+		log.Fatalln(err)
+	 }
+	body, _ := ioutil.ReadAll(resp.Body)
+	token := BearerToken{}
+	json.Unmarshal([]byte(string(body)), &token)
+	return token.Token
 }
 
 func makeRequest(musicId string) string{
 	var bearer = "Bearer "+getBearer()
 	url:="https://api.spotify.com/v1/audio-features"
 	req, err := http.NewRequest("GET", url, nil)
+
 	q := req.URL.Query()
 	q.Add("ids",musicId)
+	
 	req.Header.Add("Authorization", bearer)
 	req.URL.RawQuery = q.Encode()
 
-	//build and send request
 	client := &http.Client{}
 	resp, err := client.Do(req)
 
@@ -100,12 +114,10 @@ func makeRequest(musicId string) string{
 		log.Fatalln(err)
 	}
 
-	//we Read the response body on the line below
 	body, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
 		log.Fatalln(err)
 	}
-	//map json response to strJson
 	strJson:=string(body)
 	return strJson
 }
