@@ -69,7 +69,7 @@ func processResponse(resp  string) []string{
 	return arrayTracks
 }
 
-func getBearer() string {
+func getBearerToken() string {
 	url:="http://localhost:8080/token"
 	resp, err := http.Get(url)
 	if err != nil {
@@ -82,7 +82,7 @@ func getBearer() string {
 }
 
 func makeRequest(offset int, playlistId string) string{
-	var bearer = "Bearer "+getBearer()
+	var bearer = "Bearer "+getBearerToken()
 	req, err := http.NewRequest("GET", "https://api.spotify.com/v1/playlists/"+playlistId+"/tracks", nil)
 	q := req.URL.Query()
     q.Add("offset", strconv.Itoa(offset))
@@ -107,7 +107,7 @@ func makeRequest(offset int, playlistId string) string{
 }
 
 func getTotalMusics(playlistId  string) int {
-	var bearer = "Bearer "+getBearer()
+	var bearer = "Bearer "+getBearerToken()
 
 	req, err := http.NewRequest("GET", "https://api.spotify.com/v1/playlists/"+playlistId+"/tracks", nil)
 	q := req.URL.Query()
