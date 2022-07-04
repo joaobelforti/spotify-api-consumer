@@ -1,5 +1,5 @@
 
 ## src
 
-Folder where all files generated are placed. 
+Folder where all files generated are stored. 
 
