@@ -1,5 +1,6 @@
 *csv
 *.env
-*txt
+musics.txt
+tmp.txt
 node_modules
 *.json
