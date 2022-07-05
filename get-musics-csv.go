@@ -38,7 +38,6 @@ type BearerToken struct {
 }
 
 func main() {
-	getBearerToken()
 	f_write_csv, _ := os.Create("src/musics-csv.csv")
 	musicsIds, _ := ioutil.ReadFile("src/musics-ids.txt")
 	f_write_csv.Write([]byte("danceability,energy,key,loudness,mode,speechiness,acousticness,instrumentalness,liveness,valence,tempo,type,id,uri,track_href,analysis_url,duration_ms,time_signature\n"))
