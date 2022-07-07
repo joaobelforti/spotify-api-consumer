@@ -10,6 +10,7 @@ import (
    "regexp"
    "os"
    "fmt"
+   "sync"
    "time"
 )
 
@@ -28,36 +29,43 @@ type BearerToken struct {
 }
 
 func main() {
+	token:=getBearerToken()
+	start := time.Now()
 	playlists:=getPlaylists()
 	f, err := os.Create("src/musics-ids.txt")
-
 	if err != nil {
 		log.Fatal(err)
 	}
 
+	var wg sync.WaitGroup
+
 	for m := 0; m < len(playlists); m++ {
-		total:=getTotalMusicsPlaylist(playlists[m])/100
+		total:=getTotalMusicsPlaylist(playlists[m], token)/100
 		total=total+1
 
 		for i := 0; i < total; i++ {
-				resp:=makeRequest(i*100,playlists[m])
+				resp:=makeRequest(i*100, playlists[m], token)
 				arrayTracks:=processResponse(resp)
 
+				wg.Add(len(arrayTracks))
 				for x := 0; x < len(arrayTracks); x++ {
-					data := TrackId{}
-					json.Unmarshal([]byte(arrayTracks[x]), &data)
-
-					if data.Track.ID != "" {
-						_, err := f.Write([]byte(data.Track.ID+"\n"))
-						if err != nil {
-							log.Fatal(err)
+					go func(x int) {
+						data := TrackId{}
+						json.Unmarshal([]byte(arrayTracks[x]), &data)
+						if data.Track.ID != "" {
+							_, err := f.Write([]byte(data.Track.ID+"\n"))
+							if err != nil {
+								log.Fatal(err)
+							}
 						}
-					}
-					
+						defer wg.Done()
+					}(x)
 				}
-				time.Sleep(1 * time.Second)
 			}
 		}
+	wg.Wait()
+	elapsed := time.Since(start)
+    log.Printf("time took = %s", elapsed)
 	fmt.Println("MUSICS IDS DONE.")
 }
 
@@ -82,8 +90,8 @@ func getBearerToken() string {
 	return token.Token
 }
 
-func makeRequest(offset int, playlistId string) string{
-	var bearer = "Bearer "+getBearerToken()
+func makeRequest(offset int, playlistId string, token string) string{
+	var bearer = "Bearer "+token
 	req, err := http.NewRequest("GET", "https://api.spotify.com/v1/playlists/"+playlistId+"/tracks", nil)
 	q := req.URL.Query()
     q.Add("offset", strconv.Itoa(offset))
@@ -120,8 +128,8 @@ func getPlaylists() []string{
 	return arraysPlaylists
 }
 
-func getTotalMusicsPlaylist(playlistId  string) int {
-	var bearer = "Bearer "+getBearerToken()
+func getTotalMusicsPlaylist(playlistId  string, token string) int {
+	var bearer = "Bearer "+token
 
 	req, err := http.NewRequest("GET", "https://api.spotify.com/v1/playlists/"+playlistId+"/tracks", nil)
 	q := req.URL.Query()

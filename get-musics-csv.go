@@ -10,6 +10,7 @@ import (
    "strconv"
    "time"
    "os"
+   "sync"
 )
 
 type MusicFeatures struct {
@@ -37,7 +38,13 @@ type BearerToken struct {
 	Token string `json:"token"`
 }
 
+type Token struct {
+	Token string
+}
+
 func main() {
+	start := time.Now()
+	token := getBearerToken()
 	f_write_csv, _ := os.Create("src/musics-csv.csv")
 	musicsIds, _ := ioutil.ReadFile("src/musics-ids.txt")
 	f_write_csv.Write([]byte("danceability,energy,key,loudness,mode,speechiness,acousticness,instrumentalness,liveness,valence,tempo,type,id,uri,track_href,analysis_url,duration_ms,time_signature\n"))
@@ -46,17 +53,18 @@ func main() {
 	for i := 0; i < len(arrayIds)+1; i++ {
 		if (i%100 == 0 || i==len(arrayIds)-1) && i !=0 {
 			f1, _ := os.Create("src/tmp.txt")
-			resp:=makeRequest(strIds)
+			resp:=makeRequest(strIds, token)
 			f1.Write([]byte(resp))
 			writeCsv(f_write_csv)
 			if (i==len(arrayIds)-1){
 				break;
 			}
 			strIds=""
-			time.Sleep(1 * time.Second)
 		}
 		strIds=arrayIds[i]+","+strIds
 	}
+	elapsed := time.Since(start)
+    log.Printf("time took = %s", elapsed)
 	fmt.Println("CSV DONE.")
 }
 
@@ -71,16 +79,23 @@ func processResponse(audio_features_read string) []string{
 func writeCsv(f_write_csv *os.File) {
 	audio_features_read, _ := ioutil.ReadFile("src/tmp.txt")
 	jsonArray := processResponse(string(audio_features_read))
-	
+
+	var wg sync.WaitGroup
+	wg.Add(len(jsonArray))
+
 	for i := 0; i < len(jsonArray); i++ {
-		data := MusicFeatures{}
-		json.Unmarshal([]byte(jsonArray[i]), &data)
-		csvLine:=fmt.Sprintf("%f", data.Danceability)+","+fmt.Sprintf("%f",data.Energy)+","+strconv.Itoa(data.Key)+","+fmt.Sprintf("%f",data.Loudness)+","+strconv.Itoa(data.Mode)+","+fmt.Sprintf("%f",data.Speechiness)+","+fmt.Sprintf("%f",data.Acousticness)+","+strconv.Itoa(data.Instrumentalness)+","+fmt.Sprintf("%f",data.Liveness)+","+fmt.Sprintf("%f",data.Valence)+","+fmt.Sprintf("%f",data.Tempo)+","+string(data.Type)+","+string(data.ID)+","+string(data.URI)+","+string(data.TrackHref)+","+string(data.AnalysisURL)+","+strconv.Itoa(data.DurationMs)+","+strconv.Itoa(data.TimeSignature)+"\n"
-		_, err := f_write_csv.Write([]byte(csvLine))
-		if err != nil {
-			log.Fatal(err)
-		}
+		go func(i int) {
+			data := MusicFeatures{}
+			json.Unmarshal([]byte(jsonArray[i]), &data)
+			csvLine:=fmt.Sprintf("%f", data.Danceability)+","+fmt.Sprintf("%f",data.Energy)+","+strconv.Itoa(data.Key)+","+fmt.Sprintf("%f",data.Loudness)+","+strconv.Itoa(data.Mode)+","+fmt.Sprintf("%f",data.Speechiness)+","+fmt.Sprintf("%f",data.Acousticness)+","+strconv.Itoa(data.Instrumentalness)+","+fmt.Sprintf("%f",data.Liveness)+","+fmt.Sprintf("%f",data.Valence)+","+fmt.Sprintf("%f",data.Tempo)+","+string(data.Type)+","+string(data.ID)+","+string(data.URI)+","+string(data.TrackHref)+","+string(data.AnalysisURL)+","+strconv.Itoa(data.DurationMs)+","+strconv.Itoa(data.TimeSignature)+"\n"
+			_, err := f_write_csv.Write([]byte(csvLine))
+			if err != nil {
+				log.Fatal(err)
+			}
+			defer wg.Done()
+		}(i)
 	}
+	wg.Wait()
 }
 
 func getBearerToken() string {
@@ -95,8 +110,8 @@ func getBearerToken() string {
 	return token.Token
 }
 
-func makeRequest(musicId string) string{
-	var bearer = "Bearer "+getBearerToken()
+func makeRequest(musicId string, token string) string{
+	var bearer = "Bearer "+token
 	url:="https://api.spotify.com/v1/audio-features"
 	req, err := http.NewRequest("GET", url, nil)
 
