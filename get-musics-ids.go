@@ -44,7 +44,7 @@ func main() {
 		total=total+1
 		wg.Add(total)
 		for i := 0; i < total; i++ {
-				go func(i int) {
+			go func(i int) {
 				resp:=makeRequest(i*100, playlists[m], token)
 				arrayTracks:=processResponse(resp)
 				for x := 0; x < len(arrayTracks); x++ {
