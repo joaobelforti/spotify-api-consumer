@@ -50,19 +50,25 @@ func main() {
 	f_write_csv.Write([]byte("danceability,energy,key,loudness,mode,speechiness,acousticness,instrumentalness,liveness,valence,tempo,type,id,uri,track_href,analysis_url,duration_ms,time_signature\n"))
     arrayIds:=strings.Split(string(musicsIds),"\n")
 	strIds:=""
-	for i := 0; i < len(arrayIds)+1; i++ {
-		if (i%100 == 0 || i==len(arrayIds)-1) && i !=0 {
-			f1, _ := os.Create("src/tmp.txt")
-			resp:=makeRequest(strIds, token)
-			f1.Write([]byte(resp))
-			writeCsv(f_write_csv)
-			if (i==len(arrayIds)-1){
-				break;
+	var wg sync.WaitGroup
+	wg.Add(len(arrayIds))
+	go func() {
+		for i := 0; i < len(arrayIds)+1; i++ {
+			defer wg.Done()
+			if (i%100 == 0 || i==len(arrayIds)-1) && i !=0 {
+				f1, _ := os.Create("src/tmp.txt")
+				resp:=makeRequest(strIds, token)
+				f1.Write([]byte(resp))
+				writeCsv(f_write_csv)
+				if (i==len(arrayIds)-1){
+					break;
+				}
+				strIds=""
 			}
-			strIds=""
+			strIds=arrayIds[i]+","+strIds
 		}
-		strIds=arrayIds[i]+","+strIds
-	}
+	}()
+	wg.Wait()
 	elapsed := time.Since(start)
     log.Printf("time took = %s", elapsed)
 	fmt.Println("CSV DONE.")
@@ -82,9 +88,8 @@ func writeCsv(f_write_csv *os.File) {
 
 	var wg sync.WaitGroup
 	wg.Add(len(jsonArray))
-
+	go func() {
 	for i := 0; i < len(jsonArray); i++ {
-		go func(i int) {
 			data := MusicFeatures{}
 			json.Unmarshal([]byte(jsonArray[i]), &data)
 			csvLine:=fmt.Sprintf("%f", data.Danceability)+","+fmt.Sprintf("%f",data.Energy)+","+strconv.Itoa(data.Key)+","+fmt.Sprintf("%f",data.Loudness)+","+strconv.Itoa(data.Mode)+","+fmt.Sprintf("%f",data.Speechiness)+","+fmt.Sprintf("%f",data.Acousticness)+","+strconv.Itoa(data.Instrumentalness)+","+fmt.Sprintf("%f",data.Liveness)+","+fmt.Sprintf("%f",data.Valence)+","+fmt.Sprintf("%f",data.Tempo)+","+string(data.Type)+","+string(data.ID)+","+string(data.URI)+","+string(data.TrackHref)+","+string(data.AnalysisURL)+","+strconv.Itoa(data.DurationMs)+","+strconv.Itoa(data.TimeSignature)+"\n"
@@ -93,8 +98,8 @@ func writeCsv(f_write_csv *os.File) {
 				log.Fatal(err)
 			}
 			defer wg.Done()
-		}(i)
-	}
+		}
+	}()
 	wg.Wait()
 }
 

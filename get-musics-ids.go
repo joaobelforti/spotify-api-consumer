@@ -42,14 +42,12 @@ func main() {
 	for m := 0; m < len(playlists); m++ {
 		total:=getTotalMusicsPlaylist(playlists[m], token)/100
 		total=total+1
-
+		wg.Add(total)
 		for i := 0; i < total; i++ {
+				go func(i int) {
 				resp:=makeRequest(i*100, playlists[m], token)
 				arrayTracks:=processResponse(resp)
-
-				wg.Add(len(arrayTracks))
 				for x := 0; x < len(arrayTracks); x++ {
-					go func(x int) {
 						data := TrackId{}
 						json.Unmarshal([]byte(arrayTracks[x]), &data)
 						if data.Track.ID != "" {
@@ -58,12 +56,12 @@ func main() {
 								log.Fatal(err)
 							}
 						}
-						defer wg.Done()
-					}(x)
-				}
+					}
+					defer wg.Done()
+				}(i)
 			}
+			wg.Wait()
 		}
-	wg.Wait()
 	elapsed := time.Since(start)
     log.Printf("time took = %s", elapsed)
 	fmt.Println("MUSICS IDS DONE.")
