@@ -90,14 +90,14 @@ func writeCsv(f_write_csv *os.File) {
 	wg.Add(len(jsonArray))
 	go func() {
 	for i := 0; i < len(jsonArray); i++ {
-			data := MusicFeatures{}
-			json.Unmarshal([]byte(jsonArray[i]), &data)
-			csvLine:=fmt.Sprintf("%f", data.Danceability)+","+fmt.Sprintf("%f",data.Energy)+","+strconv.Itoa(data.Key)+","+fmt.Sprintf("%f",data.Loudness)+","+strconv.Itoa(data.Mode)+","+fmt.Sprintf("%f",data.Speechiness)+","+fmt.Sprintf("%f",data.Acousticness)+","+strconv.Itoa(data.Instrumentalness)+","+fmt.Sprintf("%f",data.Liveness)+","+fmt.Sprintf("%f",data.Valence)+","+fmt.Sprintf("%f",data.Tempo)+","+string(data.Type)+","+string(data.ID)+","+string(data.URI)+","+string(data.TrackHref)+","+string(data.AnalysisURL)+","+strconv.Itoa(data.DurationMs)+","+strconv.Itoa(data.TimeSignature)+"\n"
-			_, err := f_write_csv.Write([]byte(csvLine))
-			if err != nil {
-				log.Fatal(err)
-			}
-			defer wg.Done()
+		data := MusicFeatures{}
+		json.Unmarshal([]byte(jsonArray[i]), &data)
+		csvLine:=fmt.Sprintf("%f", data.Danceability)+","+fmt.Sprintf("%f",data.Energy)+","+strconv.Itoa(data.Key)+","+fmt.Sprintf("%f",data.Loudness)+","+strconv.Itoa(data.Mode)+","+fmt.Sprintf("%f",data.Speechiness)+","+fmt.Sprintf("%f",data.Acousticness)+","+strconv.Itoa(data.Instrumentalness)+","+fmt.Sprintf("%f",data.Liveness)+","+fmt.Sprintf("%f",data.Valence)+","+fmt.Sprintf("%f",data.Tempo)+","+string(data.Type)+","+string(data.ID)+","+string(data.URI)+","+string(data.TrackHref)+","+string(data.AnalysisURL)+","+strconv.Itoa(data.DurationMs)+","+strconv.Itoa(data.TimeSignature)+"\n"
+		_, err := f_write_csv.Write([]byte(csvLine))
+		if err != nil {
+			log.Fatal(err)
+		}
+		defer wg.Done()
 		}
 	}()
 	wg.Wait()
