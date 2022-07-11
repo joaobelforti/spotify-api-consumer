@@ -1,0 +1,10 @@
+version: "3.7"
+
+services:
+  app:
+    build: ./..
+    volumes:
+      - golangvol:/app
+
+volumes:
+  golangvol:
