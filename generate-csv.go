@@ -53,16 +53,13 @@ func main() {
 	var wg sync.WaitGroup
 	wg.Add(len(arrayIds))
 	go func() {
-		for i := 0; i < len(arrayIds)+1; i++ {
+		for i := 0; i < len(arrayIds); i++ {
 			defer wg.Done()
-			if (i%100 == 0 || i==len(arrayIds)-1) && i !=0 {
+			if (i%100 == 0 && i !=0) || i == len(arrayIds)-1 {
 				f1, _ := os.Create("src/tmp.txt")
 				resp:=makeRequest(strIds, token)
 				f1.Write([]byte(resp))
 				writeCsv(f_write_csv)
-				if (i==len(arrayIds)-1){
-					break;
-				}
 				strIds=""
 			}
 			strIds=arrayIds[i]+","+strIds
