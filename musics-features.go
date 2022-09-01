@@ -47,22 +47,24 @@ func main() {
 	start := time.Now()
 	token := getBearerToken()
 	f_write_csv, _ := os.Create("src/single-musics-csv.csv")
-	arrayIds := getMusicsTxt()
 	f_write_csv.Write([]byte("danceability,energy,key,loudness,mode,speechiness,acousticness,instrumentalness,liveness,valence,tempo,type,id,uri,track_href,analysis_url,duration_ms,time_signature\n"))
+	arrayIds := getMusicsTxt()
+	fmt.Println(len(arrayIds))
 	strIds:=""
 	var wg sync.WaitGroup
 	wg.Add(len(arrayIds))
 	go func() {
 		for i := 0; i < len(arrayIds); i++ {
 			defer wg.Done()
+			strIds=arrayIds[i]+","+strIds
 			if (i%100 == 0 && i !=0) || i == len(arrayIds)-1 {
 				f1, _ := os.Create("src/tmp.txt")
+				fmt.Println(strIds)
 				resp:=makeRequest(strIds, token)
 				f1.Write([]byte(resp))
 				writeCsv(f_write_csv)
 				strIds=""
 			}
-			strIds=arrayIds[i]+","+strIds
 		}
 	}()
 	wg.Wait()

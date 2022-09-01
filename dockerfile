@@ -11,5 +11,6 @@ RUN go env -w GO111MODULE=off
 
 RUN GOOS=windows go build get-musics-ids.go
 RUN GOOS=windows go build generate-csv.go
+
 RUN go build get-musics-ids.go
 RUN go build generate-csv.go
