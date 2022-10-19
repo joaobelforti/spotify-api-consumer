@@ -51,23 +51,16 @@ func main() {
 	arrayIds := getMusicsTxt()
 	fmt.Println(len(arrayIds))
 	strIds:=""
-	var wg sync.WaitGroup
-	wg.Add(len(arrayIds))
-	go func() {
-		for i := 0; i < len(arrayIds); i++ {
-			defer wg.Done()
-			strIds=arrayIds[i]+","+strIds
-			if (i%100 == 0 && i !=0) || i == len(arrayIds)-1 {
-				f1, _ := os.Create("src/tmp.txt")
-				fmt.Println(strIds)
-				resp:=makeRequest(strIds, token)
-				f1.Write([]byte(resp))
-				writeCsv(f_write_csv)
-				strIds=""
-			}
+	for i := 0; i < len(arrayIds); i++ {
+		strIds=arrayIds[i]+","+strIds
+		if (i%100 == 0 && i !=0) || i == len(arrayIds)-1 {
+			f1, _ := os.Create("src/tmp.txt")
+			resp:=makeRequest(strIds, token)
+			f1.Write([]byte(resp))
+			writeCsv(f_write_csv)
+			strIds=""
 		}
-	}()
-	wg.Wait()
+	}
 	elapsed := time.Since(start)
     log.Printf("time took = %s", elapsed)
 	fmt.Println("CSV DONE.")
