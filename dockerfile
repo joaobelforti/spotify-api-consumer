@@ -3,7 +3,10 @@ FROM golang:1.18.3-alpine3.15
 RUN mkdir /app
 
 ADD /generate-csv.go /app
+ADD /get-artists.go /app
 ADD /get-musics-ids.go /app
+ADD /playlists-features.go /app
+ADD /musics-features.go /app
 
 WORKDIR /app
 
