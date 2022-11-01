@@ -1,0 +1,19 @@
+version: "3.9"  # optional since v1.27.0
+services:
+  api-recommend-image:
+    container_name: api-container
+    build: .
+    ports:
+      - 5000:5000
+  docker-token-image:
+    container_name: token-container
+    build: ../docker-token
+    ports:
+      - 8080:3000
+    env_file:
+      - docker.env
+networks:
+  api-recommend-image:
+    driver: bridge
+  docker-token-image:
+    driver: bridge

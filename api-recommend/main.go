@@ -4,7 +4,6 @@ import (
 	"github.com/labstack/echo/v4"
 	"net/http"
 	"encoding/json"
-	"fmt"
 )
 
 type ClientResp struct {
@@ -22,7 +21,6 @@ func main() {
 		err := json.NewDecoder(c.Request().Body).Decode(&req)
 		resp := makeRequest(req, getBearerToken())
 		data := ApiResponse{}
-		fmt.Println(data)
 		json.Unmarshal([]byte(resp), &data)
 		
 		recommendation := ClientResp{}
